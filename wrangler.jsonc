@@ -1,0 +1,37 @@
+{
+  // Tutor universitario: un agente de estudio sobre Cloudflare Workers.
+  "name": "tutor-universitario",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  // @cloudflare/sandbox (archivos de la computadora en la nube) usa node:os.
+  "compatibility_flags": ["nodejs_compat"],
+
+  // La página del chat (public/) se sirve sola; lo que empieza por /api/ va al Worker.
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+
+  // Cada estudiante es un Durable Object con su propia base SQLite (su memoria).
+  "durable_objects": {
+    "bindings": [{ "name": "ESTUDIANTE", "class_name": "Estudiante" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Estudiante"] }],
+
+  // Su computadora en la nube (Linux con Python y ngspice). La imagen sale del Dockerfile.
+  "containers": [
+    {
+      "class_name": "Estudiante",
+      "scheduling_policy": "durable_object",
+      "images": { "computadora": { "dockerfile": "./Dockerfile" } }
+    }
+  ],
+
+  // El modelo corre en Workers AI (Cloudflare), sin claves aparte.
+  "ai": { "binding": "AI" },
+
+  // Para usar una API externa (DeepSeek, OpenAI…): MODELO_PROVEEDOR "api",
+  // MODELO_URL (ej. https://api.deepseek.com), MODELO_NOMBRE y el secreto MODELO_CLAVE.
+  "vars": {
+    "MODELO_PROVEEDOR": "workers-ai",
+    "MODELO_NOMBRE": "@cf/moonshotai/kimi-k2.5"
+  }
+  // Secreto (no va aquí): npx wrangler secret put ACCESO_CLAVE
+}

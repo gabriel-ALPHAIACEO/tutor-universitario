@@ -1,0 +1,4 @@
+# Copia este archivo como .dev.vars (no se sube a git) para probar en tu PC con «npm run dev».
+ACCESO_CLAVE=una-clave-para-entrar-al-chat
+# Solo si usas una API externa (MODELO_PROVEEDOR = "api"):
+# MODELO_CLAVE=sk-tu-clave
